@@ -149,15 +149,15 @@ show_links() {
 
     colorEcho ${BLUE} "VMess (new version sharing format)"
     # https://github.com/v2ray/discussion/issues/720
-    local uri_vmess_cf="ws+tls:${uuid}-1@${cf_node}:443/?path=`urlEncode "${path}wss"`&host=${sni}&tlsAllowInsecure=false&tlsServerName=${sni}# `urlEncode "${sni} (WSS)"`"
-    local uri_vmess="ws+tls:${uuid}-1@${sni}:443/?path=`urlEncode "${path}wss"`&host=${sni}&tlsAllowInsecure=false&tlsServerName=${sni}# `urlEncode "${sni} (WSS)"`"
+    local uri_vmess_cf="ws+tls:${uuid}-1@${cf_node}:443/?path=`urlEncode "${path}wss"`&host=${sni}&tlsAllowInsecure=false&tlsServerName=${sni}#`urlEncode "${sni} (WSS)"`"
+    local uri_vmess="ws+tls:${uuid}-1@${sni}:443/?path=`urlEncode "${path}wss"`&host=${sni}&tlsAllowInsecure=false&tlsServerName=${sni}#`urlEncode "${sni} (WSS)"`"
     printf "%s\n%s\n" "vmess://${uri_vmess_cf}" "vmess://${uri_vmess}"
     echo ""
 
     colorEcho ${BLUE} "VMess (old version sharing format)"
-    local json_vmess_cf="{\"add\":\"${cf_node}\",\"aid\":\"1\",\"host\":\"${sni}\",\"id \":\"${uuid}\",\"net\":\"ws\",\"path\":\"${path}wss\",\"port\":\"443\ ",\"ps\":\"${sni} (WSS)\",\"tls\":\"tls\",\"type\":\"none\",\"v\": \"2\"}"
+    local json_vmess_cf="{\"add\":\"${cf_node}\",\"aid\":\"1\",\"host\":\"${sni}\",\"id\":\"${uuid}\",\"net\":\"ws\",\"path\":\"${path}wss\",\"port\":\"443\",\"ps\":\"${sni} (WSS)\",\"tls\":\"tls\",\"type\":\"none\",\"v\":\"2\"}"
     local uri_vmess_2dust_cf="$(printf %s "${json_vmess_cf}" | base64 --wrap=0)"
-    local json_vmess="{\"add\":\"${sni}\",\"aid\":\"1\",\"host\":\"${sni}\",\"id \":\"${uuid}\",\"net\":\"ws\",\"path\":\"${path}wss\",\"port\":\"443\ ",\"ps\":\"${sni} (WSS)\",\"tls\":\"tls\",\"type\":\"none\",\"v\": \"2\"}"
+    local json_vmess="{\"add\":\"${sni}\",\"aid\":\"1\",\"host\":\"${sni}\",\"id\":\"${uuid}\",\"net\":\"ws\",\"path\":\"${path}wss\",\"port\":\"443\",\"ps\":\"${sni} (WSS)\",\"tls\":\"tls\",\"type\":\"none\",\"v\":\"2\"}"
     local uri_vmess_2dust="$(printf %s "${json_vmess}" | base64 --wrap=0)"
     printf "%s\n%s\n" "vmess://${uri_vmess_2dust_cf}" "vmess://${uri_vmess_2dust}"
     echo ""
@@ -177,7 +177,7 @@ show_links() {
 
     colorEcho ${BLUE} "Shadowsocks"
     local user_ss="$(printf %s "aes-128-gcm:${uuid}" | base64 --wrap=0)"
-    local uri_ss="${user_ss}@${sni}:443/?plugin=`urlEncode "v2ray-plugin;tls;mode=websocket;host=${sni};path=${path};mux=0" `#`urlEncode "${sni} (SS)"`"
+    local uri_ss="${user_ss}@${sni}:443/?plugin=`urlEncode "v2ray-plugin;tls;mode=websocket;host=${sni};path=${path};mux=0"`#`urlEncode "${sni} (SS)"`"
     printf "%s\n" "ss://${uri_ss}"
     echo ""
 
@@ -190,7 +190,7 @@ show_links() {
 
 test_ipv4_conn() {
   local res=$(curl -L -s -w "%{http_code}" https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/vless/LICENSE -o /dev/null)
-  if [[ ${res} != "200" ]]; then
+  if [[ ${res} != "200" ]];then
     colorEcho ${YELLOW} "Can't access githubusercontent, try NAT64"
     ${sudoCmd} $(which cp) /etc/resolv.conf /etc/resolv.conf.bak
     ${sudoCmd} $(which rm) -rf /etc/resolv.conf
@@ -745,7 +745,7 @@ fix_cert() {
     local uuid="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].settings.clients[0].id')"
     local path="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json '.inbounds[0].streamSettings.wsSettings.path')"
 
-    ${sudoCmd} $(which rm) -f /root/.acme.sh/$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].tag')_ecc/$(read_json / usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].tag').key
+    ${sudoCmd} $(which rm) -f /root/.acme.sh/$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].tag')_ecc/$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].tag').key
 
     colorEcho ${BLUE} "Re-setting caddy"
     set_caddy "${V2_DOMAIN}" "${uuid}"
@@ -815,8 +815,8 @@ install_v2ray() {
   get_caddy
 
   # set crontab to auto update geoip.dat and geosite.dat
-  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat -O /usr/local /share/v2ray/geoip.dat >/dev/null >/dev/null") | ${sudoCmd} crontab -
-  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat -O /usr/local /share/v2ray/geosite.dat >/dev/null >/dev/null") | ${sudoCmd} crontab -
+  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat -O /usr/local/share/v2ray/geoip.dat >/dev/null >/dev/null") | ${sudoCmd} crontab -
+  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat -O /usr/local/share/v2ray/geosite.dat >/dev/null >/dev/null") | ${sudoCmd} crontab -
 
   local uuid="$(cat '/proc/sys/kernel/random/uuid')"
   local path="/$(cat '/proc/sys/kernel/random/uuid' | sed -e 's/-//g' | tr '[:upper:]' '[:lower:]' | head -c $((10+$RANDOM%10)))"
