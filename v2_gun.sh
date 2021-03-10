@@ -29,22 +29,22 @@ nocolor="\033[0m"
 
 #copied & modified from v2fly fhs script
 identify_the_operating_system_and_architecture() {
-  if [[ "$(uname)" =='Linux' ]]; then
+  if [[ "$(uname)" == 'Linux' ]]; then
     case "$(uname -m)" in
-      'amd64' |'x86_64')
+      'amd64' | 'x86_64')
         V2_MACHINE='64'
         TJ_MACHINE='amd64'
         NP_MACHINE='x64'
         CY_MACHINE='amd64'
         ;;
-      'armv8' |'aarch64')
+      'armv8' | 'aarch64')
         V2_MACHINE='arm64-v8a'
         TJ_MACHINE='armv8'
         NP_MACHINE='arm64'
         CY_MACHINE='arm64'
         ;;
     esac
-    if [[! -f'/etc/os-release' ]]; then
+    if [[ ! -f '/etc/os-release' ]]; then
       echo "error: Don't use outdated Linux distributions."
       exit 1
     fi
@@ -82,12 +82,12 @@ identify_the_operating_system_and_architecture() {
 
 read_json() {
   # jq [key] [path-to-file]
-  ${sudoCmd} jq --raw-output $2 $1 2>/dev/null | tr -d'\n'
+  ${sudoCmd} jq --raw-output $2 $1 2>/dev/null | tr -d '\n'
 } ## read_json [path-to-file] [key]
 
 write_json() {
   # jq [key = value] [path-to-file]
-  jq -r "$2 = $3" $1> /tmp/tmp.$$.json && ${sudoCmd} mv /tmp/tmp.$$.json $1 && sleep 1
+  jq -r "$2 = $3" $1 > /tmp/tmp.$$.json && ${sudoCmd} mv /tmp/tmp.$$.json $1 && sleep 1
 } ## write_json [path-to-file] [key] [value]
 
 urlEncode() {
@@ -101,15 +101,15 @@ urlDecode() {
 continue_prompt() {
   read -rp "Continue with other operations (yes/no)?" choice
   case "${choice}" in
-    [yY]|[yY][eE][sS]) return 0 ;;
-    *) exit 0;;
+    [yY]|[yY][eE][sS] ) return 0 ;;
+    * ) exit 0;;
   esac
 }
 
 build_web() {
-  if [! -f "/var/www/html/index.html" ]; then
+  if [ ! -f "/var/www/html/index.html" ]; then
     # choose and copy a random template for dummy web pages
-    local template="$(curl -s https://raw.githubusercontent.com/phlinhng/web-templates/master/list.txt | shuf -n 1)"
+    local template="$(curl -s https://raw.githubusercontent.com/phlinhng/web-templates/master/list.txt | shuf -n  1)"
     wget -q https://raw.githubusercontent.com/phlinhng/web-templates/master/${template} -O /tmp/template.zip
     ${sudoCmd} mkdir -p /var/www/html
     ${sudoCmd} unzip -q /tmp/template.zip -d /var/www/html
@@ -122,8 +122,8 @@ build_web() {
 checkIP() {
   local realIP4="$(curl -s `curl -s https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/custom/ip4_api` -m 5)"
   local realIP6="$(curl -s `curl -s https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/custom/ip6_api` -m 5)"
-  local resolvedIP4="$(ping $1 -c 1 | head -n 1 | grep -oE'[0-9]+\.[0-9]+\.[0-9]+\.[0-9] +'| head -n 1)"
-  local resolvedIP6="$(ping6 $1 -c 1 | head -n 1 | grep -oE'(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA -F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:) {1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a- fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{ 1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}) {1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5} |[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a- fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA -Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]| 1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0 ,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0- 5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]| (2[0-4]|1{0,1}[0-9]){0,1}[0-9]))' | head -n 1)"
+  local resolvedIP4="$(ping $1 -c 1 | head -n 1 | grep  -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)"
+  local resolvedIP6="$(ping6 $1 -c 1 | head -n 1 | grep  -oE '(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))' | head -n 1)"
 
   if [[ "${realIP4}" == "${resolvedIP4}" ]] || [[ "${realIP6}" == "${resolvedIP6}" ]]; then
     return 0
@@ -133,11 +133,11 @@ checkIP() {
 }
 
 show_links() {
-  if [-f "/usr/local/bin/v2ray" ]; then
-    local uuid="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].settings.clients[0].id')"
-    local path="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json'.inbounds[0].streamSettings.wsSettings.path')"
-    local sni="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].tag')"
-    local cf_node="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json'.inbounds[0].tag')"
+  if [ -f "/usr/local/bin/v2ray" ]; then
+    local uuid="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].settings.clients[0].id')"
+    local path="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json '.inbounds[0].streamSettings.wsSettings.path')"
+    local sni="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].tag')"
+    local cf_node="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json '.inbounds[0].tag')"
     # path ss+ws: /[base], path vless+ws: /[base]ws, path vmess+ws: /[base]wss, path trojan+ws: /[base]tj
 
     colorEcho ${YELLOW} "==============Share Link==============="
@@ -207,7 +207,7 @@ test_ipv4_conn() {
 preinstall() {
   # turning off selinux
   ${sudoCmd} setenforce 0 2>/dev/null
-  ${sudoCmd} echo "SELINUX=disable"> /etc/selinux/config
+  ${sudoCmd} echo "SELINUX=disable" > /etc/selinux/config
 
   # turning off firewall
   ${sudoCmd} systemctl stop firewalld 2>/dev/null
@@ -224,7 +224,7 @@ preinstall() {
   test_ipv4_conn
 
   # install jq mannualy if the package management didn't
-  if [[! "$(command -v jq)" ]]; then
+  if [[ ! "$(command -v jq)" ]]; then
     echo "Fetching jq failed, trying manual installation"
     ${sudoCmd} curl -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -o /usr/bin/jq
     ${sudoCmd} $(which chmod) +x /usr/bin/jq
@@ -263,11 +263,11 @@ get_cert_alt() {
 }
 
 get_trojan() {
-  if [! -f "/usr/bin/trojan-go" ]; then
+  if [ ! -f "/usr/bin/trojan-go" ]; then
     colorEcho ${BLUE} "trojan-go is not installed. start installation"
 
     colorEcho ${BLUE} "Getting the latest version of trojan-go"
-    local latest_version="$(curl -s "https://api.github.com/repos/p4gefau1t/trojan-go/releases" | jq'.[0].tag_name' --raw-output)"
+    local latest_version="$(curl -s "https://api.github.com/repos/p4gefau1t/trojan-go/releases" | jq '.[0].tag_name' --raw-output)"
     echo "${latest_version}"
     local trojango_link="https://github.com/p4gefau1t/trojan-go/releases/download/${latest_version}/trojan-go-linux-${TJ_MACHINE}.zip"
 
@@ -289,7 +289,7 @@ get_trojan() {
     colorEcho ${GREEN} "trojan-go is installed."
   else
     colorEcho ${BLUE} "Getting the latest version of trojan-go"
-    local latest_version="$(curl -s "https://api.github.com/repos/p4gefau1t/trojan-go/releases" | jq'.[0].tag_name' --raw-output)"
+    local latest_version="$(curl -s "https://api.github.com/repos/p4gefau1t/trojan-go/releases" | jq '.[0].tag_name' --raw-output)"
     echo "${latest_version}"
     local trojango_link="https://github.com/p4gefau1t/trojan-go/releases/download/${latest_version}/trojan-go-linux-${TJ_MACHINE}.zip"
 
@@ -302,7 +302,7 @@ get_trojan() {
 }
 
 set_v2ray_systemd() {
-  ${sudoCmd} cat> "/etc/systemd/system/v2ray.service" <<-EOF
+  ${sudoCmd} cat > "/etc/systemd/system/v2ray.service" <<-EOF
 [Unit]
 Description=V2Ray Service
 Documentation=https://www.v2fly.org/
@@ -324,18 +324,18 @@ EOF
 }
 
 get_v2ray() {
-  if [! -f "/usr/local/bin/v2ray" ]; then
+  if [ ! -f "/usr/local/bin/v2ray" ]; then
     colorEcho ${BLUE} "V2Ray is not installed. start installation"
 
     colorEcho ${BLUE} "Getting the latest version of v2ray-core"
-    #local latest_version="$(curl -s "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | jq'.tag_name' --raw-output)"
+    #local latest_version="$(curl -s "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | jq '.tag_name' --raw-output)"
     local latest_version="v4.32.1"
     echo "${latest_version}"
     local v2ray_link="https://github.com/v2fly/v2ray-core/releases/download/${latest_version}/v2ray-linux-${V2_MACHINE}.zip"
 
     ${sudoCmd} $(which mkdir) -p "/usr/local/etc/v2ray"
     printf "Cretated: %s\n" "/usr/local/etc/v2ray"
-    for BASE in 00_log 01_api 02_dns 03_routing 04_policy 06_outbounds 07_transport 08_stats 09_reverse; do echo'{}'> "/usr/local/etc/v2ray/$BASE.json"; done
+    for BASE in 00_log 01_api 02_dns 03_routing 04_policy 06_outbounds 07_transport 08_stats 09_reverse; do echo '{}' > "/usr/local/etc/v2ray/$BASE.json"; done
     ${sudoCmd} $(which mkdir) -p "/usr/local/share/v2ray"
     printf "Cretated: %s\n" "/usr/local/share/v2ray"
 
@@ -360,7 +360,7 @@ get_v2ray() {
     colorEcho ${GREEN} "V2Ray ${latest_version} is installed."
   else
     colorEcho ${BLUE} "Getting the latest version of v2ray-core"
-    local latest_version="$(curl -s "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | jq'.tag_name' --raw-output)"
+    local latest_version="$(curl -s "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | jq '.tag_name' --raw-output)"
     echo "${latest_version}"
     local v2ray_link="https://github.com/v2fly/v2ray-core/releases/download/${latest_version}/v2ray-linux-${V2_MACHINE}.zip"
 
@@ -383,7 +383,7 @@ set_v2ray() {
   # $3: sni
   # $4: url of cf node
   # 3564: trojan, 3565: ss, 3566: vmess+wss, 3567: vless+wss, 3568: trojan+ws
-  ${sudoCmd} cat> "/usr/local/etc/v2ray/05_inbounds_vless.json" <<-EOF
+  ${sudoCmd} cat > "/usr/local/etc/v2ray/05_inbounds_vless.json" <<-EOF
 {
   "inbounds": [
     {
@@ -426,7 +426,7 @@ set_v2ray() {
         "network": "tcp",
         "security": "xtls",
         "xtlsSettings": {
-          "alpn": ["http/1.1" ],
+          "alpn": [ "http/1.1" ],
           "certificates": [
             {
               "certificateFile": "/etc/ssl/v2ray/fullchain.pem",
@@ -437,14 +437,14 @@ set_v2ray() {
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": ["http", "tls"]
+        "destOverride": [ "http", "tls" ]
       },
       "tag": "$3"
     }
   ]
 }
 EOF
-  ${sudoCmd} cat> "/usr/local/etc/v2ray/05_inbounds_ss.json" <<-EOF
+  ${sudoCmd} cat > "/usr/local/etc/v2ray/05_inbounds_ss.json" <<-EOF
 {
   "inbounds": [
     {
@@ -466,14 +466,14 @@ EOF
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": ["http", "tls"]
+        "destOverride": [ "http", "tls" ]
       },
       "tag": "$4"
     }
   ]
 }
 EOF
-  ${sudoCmd} cat> "/usr/local/etc/v2ray/05_inbounds_vless_ws.json" <<-EOF
+  ${sudoCmd} cat > "/usr/local/etc/v2ray/05_inbounds_vless_ws.json" <<-EOF
 {
   "inbounds": [
     {
@@ -498,14 +498,14 @@ EOF
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": ["http", "tls"]
+        "destOverride": [ "http", "tls" ]
       },
       "tag": "vless_ws"
     }
   ]
 }
 EOF
-  ${sudoCmd} cat> "/usr/local/etc/v2ray/05_inbounds_vmess_ws.json" <<-EOF
+  ${sudoCmd} cat > "/usr/local/etc/v2ray/05_inbounds_vmess_ws.json" <<-EOF
 {
   "inbounds": [
     {
@@ -530,22 +530,22 @@ EOF
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": ["http", "tls"]
+        "destOverride": [ "http", "tls" ]
       },
       "tag": "vmess_ws"
     }
   ]
 }
 EOF
-  ${sudoCmd} wget -q https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/config/03_routing.json -O /usr/local/etc/v2ray/03_routing. json
-  ${sudoCmd} wget -q https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/config/06_outbounds.json -O /usr/local/etc/v2ray/06_outbounds. json
+  ${sudoCmd} wget -q https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/config/03_routing.json -O /usr/local/etc/v2ray/03_routing.json
+  ${sudoCmd} wget -q https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/config/06_outbounds.json -O /usr/local/etc/v2ray/06_outbounds.json
 }
 
 set_trojan() {
   # $1: password
   # $2: ws path
   # $3: sni
-  ${sudoCmd} cat> "/etc/trojan-go/config.json" <<-EOF
+  ${sudoCmd} cat > "/etc/trojan-go/config.json" <<-EOF
 {
   "run_type": "server",
   "local_addr": "127.0.0.1",
@@ -573,7 +573,7 @@ EOF
 }
 
 set_naive() {
-  ${sudoCmd} cat> "/usr/local/etc/naive/config.json" <<-EOF
+  ${sudoCmd} cat > "/usr/local/etc/naive/config.json" <<-EOF
 {
   "listen": "http://127.0.0.1:8081",
   "padding": "true"
@@ -582,7 +582,7 @@ EOF
 }
 
 set_naive_systemd() {
-  ${sudoCmd} cat> "/etc/systemd/system/naive.service" <<-EOF
+  ${sudoCmd} cat > "/etc/systemd/system/naive.service" <<-EOF
 [Unit]
 Description=NaïveProxy Service
 Documentation=https://github.com/klzgrad/naiveproxy
@@ -603,11 +603,11 @@ EOF
 }
 
 get_naiveproxy() {
-  if [! -f "/usr/local/bin/naive" ]; then
+  if [ ! -f "/usr/local/bin/naive" ]; then
     colorEcho ${BLUE} "NaiveProxy is not installed. start installation"
 
     colorEcho ${BLUE} "Getting the latest version of naiveproxy"
-    local latest_version="$(curl -s "https://api.github.com/repos/klzgrad/naiveproxy/releases/latest" | jq'.tag_name' --raw-output)"
+    local latest_version="$(curl -s "https://api.github.com/repos/klzgrad/naiveproxy/releases/latest" | jq '.tag_name' --raw-output)"
     echo "${latest_version}"
     local naive_link="https://github.com/klzgrad/naiveproxy/releases/download/${latest_version}/naiveproxy-${latest_version}-linux-${NP_MACHINE}.tar.xz"
 
@@ -631,7 +631,7 @@ get_naiveproxy() {
     colorEcho ${GREEN} "NaiveProxy ${latest_version} is installed."
   else
     colorEcho ${BLUE} "Getting the latest version of naiveproxy"
-    local latest_version="$(curl -s "https://api.github.com/repos/klzgrad/naiveproxy/releases/latest" | jq'.tag_name' --raw-output)"
+    local latest_version="$(curl -s "https://api.github.com/repos/klzgrad/naiveproxy/releases/latest" | jq '.tag_name' --raw-output)"
     echo "${latest_version}"
     local naive_link="https://github.com/klzgrad/naiveproxy/releases/download/${latest_version}/naiveproxy-${latest_version}-linux-${NP_MACHINE}.tar.xz"
 
@@ -648,7 +648,7 @@ get_naiveproxy() {
 }
 
 set_caddy_systemd() {
-  ${sudoCmd} cat> "/etc/systemd/system/caddy.service" <<-EOF
+  ${sudoCmd} cat > "/etc/systemd/system/caddy.service" <<-EOF
 [Unit]
 Description=Caddy
 Documentation=https://caddyserver.com/docs/
@@ -676,7 +676,7 @@ EOF
 # forward_proxy only works with 443 port according to caddy2's document. will try to figure out this
 # https://github.com/caddyserver/forwardproxy/tree/caddy2
 set_caddy() {
-  ${sudoCmd} cat> "/usr/local/etc/caddy/Caddyfile"<<-EOF
+  ${sudoCmd} cat > "/usr/local/etc/caddy/Caddyfile"<<-EOF
 http://$1:80 {
   redir https://$1{uri}
 }
@@ -690,14 +690,14 @@ http://$1:8080 {
       probe_resistance unsplash.com:443
       upstream http://127.0.0.1:8081
     }
-    file_server {root /var/www/html}
+    file_server { root /var/www/html }
   }
 }
 EOF
 }
 
 get_caddy() {
-  if [! -f "/usr/local/bin/caddy" ]; then
+  if [ ! -f "/usr/local/bin/caddy" ]; then
     colorEcho ${BLUE} "Caddy 2 is not installed. start installation"
 
     local caddy_link="https://github.com/charlieethan/build/releases/download/v2.2.1/caddy-linux-${CY_MACHINE}"
@@ -726,7 +726,7 @@ get_caddy() {
 }
 
 fix_cert() {
-  if [-f "/usr/local/bin/v2ray" ]; then
+  if [ -f "/usr/local/bin/v2ray" ]; then
     while true; do
       read -rp "Resolved to the domain name of this VPS: "V2_DOMAIN
       if checkIP "${V2_DOMAIN}"; then
@@ -736,16 +736,16 @@ fix_cert() {
         colorEcho ${RED} "The domain name ${V2_DOMAIN} is parsed incorrectly (yes: force to continue, no: re-enter, quit: leave)"
         read -rp "If you are sure that the domain name is resolved correctly, you can continue the repair operation. Force to continue? (yes/no/quit) "forceConfirm
         case "${forceConfirm}" in
-          [yY]|[yY][eE][sS]) break ;;
-          [qQ]|[qQ][uU][iI][tT]) return 0 ;;
+          [yY]|[yY][eE][sS] ) break ;;
+          [qQ]|[qQ][uU][iI][tT] ) return 0 ;;
         esac
       fi
     done
 
-    local uuid="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].settings.clients[0].id')"
-    local path="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json'.inbounds[0].streamSettings.wsSettings.path')"
+    local uuid="$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].settings.clients[0].id')"
+    local path="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json '.inbounds[0].streamSettings.wsSettings.path')"
 
-    ${sudoCmd} $(which rm) -f /root/.acme.sh/$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].tag')_ecc/$(read_json / usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].tag').key
+    ${sudoCmd} $(which rm) -f /root/.acme.sh/$(read_json /usr/local/etc/v2ray/05_inbounds_vless.json '.inbounds[0].tag')_ecc/$(read_json / usr/local/etc/v2ray/05_inbounds_vless.json'.inbounds[0].tag').key
 
     colorEcho ${BLUE} "Re-setting caddy"
     set_caddy "${V2_DOMAIN}" "${uuid}"
@@ -757,7 +757,7 @@ fix_cert() {
 
     colorEcho ${BLUE} "Re-setting v2ray"
     # temporary cert
-    ${sudoCmd} openssl req -new -newkey rsa:2048 -days 1 -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=Company Name/OU=Org/CN=${V2_DOMAIN }" -keyout /etc/ssl/v2ray/key.pem -out /etc/ssl/v2ray/fullchain.pem
+    ${sudoCmd} openssl req -new -newkey rsa:2048 -days 1 -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=Company Name/OU=Org/CN=${V2_DOMAIN}" -keyout /etc/ssl/v2ray/key.pem -out /etc/ssl/v2ray/fullchain.pem
     ${sudoCmd} chmod 644 /etc/ssl/v2ray/key.pem
     ${sudoCmd} chmod 644 /etc/ssl/v2ray/fullchain.pem
 
@@ -770,12 +770,12 @@ fix_cert() {
 
     write_json /usr/local/etc/v2ray/05_inbounds_vless.json ".inbounds[0].tag" "\"${V2_DOMAIN}\""
 
-    if [-f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
+    if [ -f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
       colorEcho ${GREEN} "Certificate restoration succeeded!"
       show_links
     else
       get_cert_alt "${V2_DOMAIN}"
-      if [-f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
+      if [ -f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
         colorEcho ${GREEN} "Certificate restoration succeeded!"
         show_links
       else
@@ -798,8 +798,8 @@ install_v2ray() {
       colorEcho ${RED} "The domain name ${V2_DOMAIN} is parsed incorrectly (yes: force to continue, no: re-enter, quit: leave)"
       read -rp "If you are sure that the domain name is resolved correctly, you can continue the installation operation. Force to continue? (yes/no/quit) "forceConfirm
       case "${forceConfirm}" in
-        [yY]|[yY][eE][sS]) break ;;
-        [qQ]|[qQ][uU][iI][tT]) return 0 ;;
+        [yY]|[yY][eE][sS] ) break ;;
+        [qQ]|[qQ][uU][iI][tT] ) return 0 ;;
       esac
     fi
   done
@@ -815,11 +815,11 @@ install_v2ray() {
   get_caddy
 
   # set crontab to auto update geoip.dat and geosite.dat
-  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat -O /usr/local /share/v2ray/geoip.dat >/dev/null >/dev/null") | ${sudoCmd} crontab-
-  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat -O /usr/local /share/v2ray/geosite.dat >/dev/null >/dev/null") | ${sudoCmd} crontab-
+  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat -O /usr/local /share/v2ray/geoip.dat >/dev/null >/dev/null") | ${sudoCmd} crontab -
+  (crontab -l 2>/dev/null; echo "0 7 * * * wget -q https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat -O /usr/local /share/v2ray/geosite.dat >/dev/null >/dev/null") | ${sudoCmd} crontab -
 
-  local uuid="$(cat'/proc/sys/kernel/random/uuid')"
-  local path="/$(cat'/proc/sys/kernel/random/uuid' | sed -e's/-//g' | tr'[:upper:]''[:lower:]' | head -c $((10+$RANDOM%10)))"
+  local uuid="$(cat '/proc/sys/kernel/random/uuid')"
+  local path="/$(cat '/proc/sys/kernel/random/uuid' | sed -e 's/-//g' | tr '[:upper:]' '[:lower:]' | head -c $((10+$RANDOM%10)))"
   local cf_node="$(curl -s https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/custom/cf_node)"
 
   colorEcho ${BLUE} "Setting v2ray"
@@ -832,7 +832,7 @@ install_v2ray() {
   ${sudoCmd} $(which mkdir) -p /etc/ssl/v2ray
 
   # temporary cert
-  ${sudoCmd} openssl req -new -newkey rsa:2048 -days 1 -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=Company Name/OU=Org/CN=${V2_DOMAIN }" -keyout /etc/ssl/v2ray/key.pem -out /etc/ssl/v2ray/fullchain.pem
+  ${sudoCmd} openssl req -new -newkey rsa:2048 -days 1 -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=Company Name/OU=Org/CN=${V2_DOMAIN}" -keyout /etc/ssl/v2ray/key.pem -out /etc/ssl/v2ray/fullchain.pem
   ${sudoCmd} $(which chmod) 644 /etc/ssl/v2ray/key.pem
   ${sudoCmd} $(which chmod) 644 /etc/ssl/v2ray/fullchain.pem
 
@@ -860,19 +860,19 @@ install_v2ray() {
 
   get_acmesh
 
-  if [-f "/usr/local/bin/v2ray" ]; then
+  if [ -f "/usr/local/bin/v2ray" ]; then
     get_cert "${V2_DOMAIN}"
   else
     colorEcho ${RED} "v2ray-core download failed, which may affect the certificate application, please make sure your machine can access githubusercontent before running this script"
     exit 1
   fi
 
-  if [-f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
+  if [ -f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
     colorEcho ${GREEN} "Install VLESS + VMess + Trojan + NaiveProxy successfully!"
     show_links
   else
     get_cert_alt "${V2_DOMAIN}"
-    if [-f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
+    if [ -f "/root/.acme.sh/${V2_DOMAIN}_ecc/fullchain.cer" ]; then
       colorEcho ${GREEN} "Install VLESS + VMess + Trojan + NaiveProxy successfully!"
       show_links
     else
@@ -882,8 +882,8 @@ install_v2ray() {
 }
 
 edit_cf_node() {
-  if [-f "/usr/local/bin/v2ray" ]; then
-  local cf_node_current="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json'.inbounds[0].tag')"
+  if [ -f "/usr/local/bin/v2ray" ]; then
+  local cf_node_current="$(read_json /usr/local/etc/v2ray/05_inbounds_ss.json '.inbounds[0].tag')"
   printf "%s\n" "Enter the number and use the recommended value"
   printf "1. %s\n" "icook.hk"
   printf "2. %s\n" "www.digitalocean.com"
@@ -896,7 +896,7 @@ edit_cf_node() {
     "3") cf_node_new="www.garmin.com" ;;
     "4") cf_node_new="amp.cloudflare.com" ;;
   esac
-  if [-z "${cf_node_new}" ]; then
+  if [ -z "${cf_node_new}" ]; then
     cf_node_new="${cf_node_current}"
   fi
   write_json /usr/local/etc/v2ray/05_inbounds_ss.json ".inbounds[0].tag" "\"${cf_node_new}\""
@@ -913,7 +913,7 @@ vps_tools() {
 }
 
 rm_v2gun() {
-  if [-f "/usr/local/bin/v2ray" ]; then
+  if [ -f "/usr/local/bin/v2ray" ]; then
     wget -q https://raw.githubusercontent.com/phlinhng/v2ray-tcp-tls-web/${branch}/tools/rm_v2gun.sh -O /tmp/rm_v2gun.sh && bash /tmp/rm_v2gun.sh
     exit 0
   fi
