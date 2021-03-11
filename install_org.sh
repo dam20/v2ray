@@ -343,16 +343,16 @@ nginx_exist_check() {
     fi
 }
 nginx_install() {
-    #    if [[ -d "/etc/nginx" ]];then
-    #        rm -rf /etc/nginx
-    #    fi
+    # if [[ -d "/etc/nginx" ]];then
+    # rm -rf /etc/nginx
+    # fi
 
     wget -nc --no-check-certificate http://nginx.org/download/nginx-${nginx_version}.tar.gz -P ${nginx_openssl_src}
-    judge "Nginx 下载"
+    judge "Nginx download"
     wget -nc --no-check-certificate https://www.openssl.org/source/openssl-${openssl_version}.tar.gz -P ${nginx_openssl_src}
-    judge "openssl 下载"
+    judge "openssl download"
     wget -nc --no-check-certificate https://github.com/jemalloc/jemalloc/releases/download/${jemalloc_version}/jemalloc-${jemalloc_version}.tar.bz2 -P ${nginx_openssl_src}
-    judge "jemalloc 下载"
+    judge "jemalloc download"
 
     cd ${nginx_openssl_src} || exit
 
@@ -367,18 +367,18 @@ nginx_install() {
 
     [[ -d "$nginx_dir" ]] && rm -rf ${nginx_dir}
 
-    echo -e "${OK} ${GreenBG} 即将开始编译安装 jemalloc ${Font}"
+    echo -e "${OK} ${GreenBG} will start to compile and install jemalloc ${Font}"
     sleep 2
 
     cd jemalloc-${jemalloc_version} || exit
     ./configure
-    judge "编译检查"
+    judge "compile check"
     make -j "${THREAD}" && make install
-    judge "jemalloc 编译安装"
+    judge "jemalloc compile and install"
     echo '/usr/local/lib' >/etc/ld.so.conf.d/local.conf
     ldconfig
 
-    echo -e "${OK} ${GreenBG} 即将开始编译安装 Nginx, 过程稍久，请耐心等待 ${Font}"
+    echo -e "${OK} ${GreenBG} will start to compile and install Nginx, the process will take a little longer, please wait patiently ${Font}"
     sleep 4
 
     cd ../nginx-${nginx_version} || exit
@@ -397,23 +397,23 @@ nginx_install() {
         --with-cc-opt='-O3' \
         --with-ld-opt="-ljemalloc" \
         --with-openssl=../openssl-"$openssl_version"
-    judge "编译检查"
+    judge "Compile check"
     make -j "${THREAD}" && make install
-    judge "Nginx 编译安装"
+    judge "Nginx compile and install"
 
-    # 修改基本配置
+    # Modify the basic configuration
     sed -i 's/#user  nobody;/user  root;/' ${nginx_dir}/conf/nginx.conf
     sed -i 's/worker_processes  1;/worker_processes  3;/' ${nginx_dir}/conf/nginx.conf
     sed -i 's/    worker_connections  1024;/    worker_connections  4096;/' ${nginx_dir}/conf/nginx.conf
     sed -i '$i include conf.d/*.conf;' ${nginx_dir}/conf/nginx.conf
 
-    # 删除临时文件
+    # Delete temporary files
     rm -rf ../nginx-"${nginx_version}"
     rm -rf ../openssl-"${openssl_version}"
     rm -rf ../nginx-"${nginx_version}".tar.gz
     rm -rf ../openssl-"${openssl_version}".tar.gz
 
-    # 添加配置文件夹，适配旧版脚本
+    # Add a configuration folder to adapt to the old script
     mkdir ${nginx_dir}/conf/conf.d
 }
 ssl_install() {
@@ -422,32 +422,32 @@ ssl_install() {
     else
         ${INS} install socat netcat -y
     fi
-    judge "安装 SSL 证书生成脚本依赖"
+    judge "Install SSL certificate generation script dependency"
 
     curl https://get.acme.sh | sh
-    judge "安装 SSL 证书生成脚本"
+    judge "Install the SSL certificate generation script"
 }
 domain_check() {
-    read -rp "请输入你的域名信息(eg:www.wulabing.com):" domain
+    read -rp "Please enter your domain name information (eg:www.wulabing.com):" domain
     domain_ip=$(ping "${domain}" -c 1 | sed '1{s/[^(]*(//;s/).*//;q}')
-    echo -e "${OK} ${GreenBG} 正在获取 公网ip 信息，请耐心等待 ${Font}"
+    echo -e "${OK} ${GreenBG} is getting public network ip information, please wait patiently ${Font}"
     local_ip=$(curl https://api-ipv4.ip.sb/ip)
-    echo -e "域名dns解析IP：${domain_ip}"
-    echo -e "本机IP: ${local_ip}"
+    echo -e "Domain name dns resolve IP: ${domain_ip}"
+    echo -e "Local IP: ${local_ip}"
     sleep 2
     if [[ $(echo "${local_ip}" | tr '.' '+' | bc) -eq $(echo "${domain_ip}" | tr '.' '+' | bc) ]]; then
-        echo -e "${OK} ${GreenBG} 域名dns解析IP 与 本机IP 匹配 ${Font}"
+        echo -e "${OK} ${GreenBG} The domain name dns resolved IP matches the local IP ${Font}"
         sleep 2
     else
-        echo -e "${Error} ${RedBG} 请确保域名添加了正确的 A 记录，否则将无法正常使用 V2ray ${Font}"
-        echo -e "${Error} ${RedBG} 域名dns解析IP 与 本机IP 不匹配 是否继续安装？（y/n）${Font}" && read -r install
+        echo -e "${Error} ${RedBG} Please make sure the domain name is added with the correct A record, otherwise V2ray will not work normally ${Font}"
+        echo -e "${Error} ${RedBG} The domain name dns resolution IP does not match the local IP. Do you want to continue the installation? (y/n)${Font}" && read -r install
         case $install in
         [yY][eE][sS] | [yY])
-            echo -e "${GreenBG} 继续安装 ${Font}"
+            echo -e "${GreenBG} continue to install ${Font}"
             sleep 2
             ;;
         *)
-            echo -e "${RedBG} 安装终止 ${Font}"
+            echo -e "${RedBG} installation terminated ${Font}"
             exit 2
             ;;
         esac
@@ -456,39 +456,39 @@ domain_check() {
 
 port_exist_check() {
     if [[ 0 -eq $(lsof -i:"$1" | grep -i -c "listen") ]]; then
-        echo -e "${OK} ${GreenBG} $1 端口未被占用 ${Font}"
+        echo -e "${OK} ${GreenBG} $1 port is not occupied ${Font}"
         sleep 1
     else
-        echo -e "${Error} ${RedBG} 检测到 $1 端口被占用，以下为 $1 端口占用信息 ${Font}"
+        echo -e "${Error} ${RedBG} detected that $1 port is occupied, the following is the occupation information of $1 port ${Font}"
         lsof -i:"$1"
-        echo -e "${OK} ${GreenBG} 5s 后将尝试自动 kill 占用进程 ${Font}"
+        echo -e "${OK} ${GreenBG} will try to automatically kill the occupied process ${Font} after 5s"
         sleep 5
         lsof -i:"$1" | awk '{print $2}' | grep -v "PID" | xargs kill -9
-        echo -e "${OK} ${GreenBG} kill 完成 ${Font}"
+        echo -e "${OK} ${GreenBG} kill completed ${Font}"
         sleep 1
     fi
 }
 acme() {
     if "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force --test; then
-        echo -e "${OK} ${GreenBG} SSL 证书测试签发成功，开始正式签发 ${Font}"
+        echo -e "${OK} ${GreenBG} SSL certificate test issuance is successful, and the official issuance starts ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
         sleep 2
     else
-        echo -e "${Error} ${RedBG} SSL 证书测试签发失败 ${Font}"
+        echo -e "${Error} ${RedBG} SSL certificate test issuance failed ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
         exit 1
     fi
 
     if "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force; then
-        echo -e "${OK} ${GreenBG} SSL 证书生成成功 ${Font}"
+        echo -e "${OK} ${GreenBG} SSL certificate generated successfully ${Font}"
         sleep 2
         mkdir /data
         if "$HOME"/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /data/v2ray.crt --keypath /data/v2ray.key --ecc --force; then
-            echo -e "${OK} ${GreenBG} 证书配置成功 ${Font}"
+            echo -e "${OK} ${GreenBG} certificate configuration is successful ${Font}"
             sleep 2
         fi
     else
-        echo -e "${Error} ${RedBG} SSL 证书生成失败 ${Font}"
+        echo -e "${Error} ${RedBG} SSL certificate generation failed ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
         exit 1
     fi
@@ -511,17 +511,17 @@ v2ray_conf_add_h2() {
 }
 old_config_exist_check() {
     if [[ -f $v2ray_qr_config_file ]]; then
-        echo -e "${OK} ${GreenBG} 检测到旧配置文件，是否读取旧文件配置 [Y/N]? ${Font}"
+        echo -e "${OK} ${GreenBG} detects the old configuration file, do you want to read the old file configuration [Y/N]? ${Font}"
         read -r ssl_delete
         case $ssl_delete in
         [yY][eE][sS] | [yY])
-            echo -e "${OK} ${GreenBG} 已保留旧配置  ${Font}"
+            echo -e "${OK} ${GreenBG} has retained the old configuration ${Font}"
             old_config_status="on"
             port=$(info_extraction '\"port\"')
             ;;
         *)
             rm -rf $v2ray_qr_config_file
-            echo -e "${OK} ${GreenBG} 已删除旧配置  ${Font}"
+            echo -e "${OK} ${GreenBG} has deleted the old configuration ${Font}"
             ;;
         esac
     fi
@@ -573,7 +573,7 @@ EOF
 
     modify_nginx_port
     modify_nginx_other
-    judge "Nginx 配置修改"
+    judge "Nginx configuration modification"
 
 }
 
@@ -582,18 +582,18 @@ start_process_systemd() {
     chown -R root.root /var/log/v2ray/
     if [[ "$shell_mode" != "h2" ]]; then
         systemctl restart nginx
-        judge "Nginx 启动"
+        judge "Nginx start"
     fi
     systemctl restart v2ray
-    judge "V2ray 启动"
+    judge "V2ray start"
 }
 
 enable_process_systemd() {
     systemctl enable v2ray
-    judge "设置 v2ray 开机自启"
+    judge "Set v2ray to boot from boot"
     if [[ "$shell_mode" != "h2" ]]; then
         systemctl enable nginx
-        judge "设置 Nginx 开机自启"
+        judge "Set Nginx to start automatically after booting"
     fi
 
 }
