@@ -948,7 +948,7 @@ menu() {
 
   while true; do
     show_menu
-    read -rp "Select operation [Enter any value to exit]: "opt
+    read -rp "Select operation [Enter any value to exit]: " opt
     case "${opt}" in
       "1") install_v2ray && continue_prompt ;;
       "2") fix_cert && continue_prompt ;;
