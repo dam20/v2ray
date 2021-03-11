@@ -981,7 +981,8 @@ menu() {
     echo -e "${Green}15.${Font} update certificate crontab scheduled task"
     echo -e "${Green}16.${Font} empty certificate legacy files"
     echo -e "${Green}17.${Font} exit \n"
-    echo -e "Please enter a number: " read -rp "" menu_num
+    echo -e "Please enter a number: " 
+    read -rp "Please enter a number: " menu_num
     case $menu_num in
     0)
         update_sh
