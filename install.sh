@@ -209,7 +209,7 @@ dependency_install() {
     ${INS} -y install haveged
     # judge "haveged installation"
 
-    # sed -i -r'/^HRNGDEVICE/d;/#HRNGDEVICE=\/dev\/null/a HRNGDEVICE=/dev/urandom' /etc/default/rng-tools
+    # sed -i -r '/^HRNGDEVICE/d;/#HRNGDEVICE=\/dev\/null/a HRNGDEVICE=/dev/urandom' /etc/default/rng-tools
 
     if [[ "${ID}" == "centos" ]]; then
         # systemctl start rngd && systemctl enable rngd
@@ -241,7 +241,7 @@ port_alterid_set() {
     if [[ "on" != "$old_config_status" ]]; then
         read -rp "Please enter the connection port (default:443) :" port
         [[ -z ${port} ]] && port="443"
-        read -rp "Please enter alterID (default: 2 only allows numbers):" alterID
+        read -rp "Please enter alterID (default: 2 only allows numbers) :" alterID
         [[ -z ${alterID} ]] && alterID="2"
     fi
 }
@@ -779,7 +779,7 @@ EOF
 
 tls_type() {
     if [[ -f "/etc/nginx/sbin/nginx" ]] && [[ -f "$nginx_conf" ]] && [[ "$shell_mode" == "ws" ]]; then
-        echo "Please select a supported TLS version (default: 3):"
+        echo "Please select a supported TLS version (default:3) :"
         echo "Please note that if you use Quantaumlt X / router / old Shadowrocket / V2ray core version lower than 4.18.1, please select compatibility mode"
         echo "1: TLS1.1 TLS1.2 and TLS1.3 (compatibility mode)"
         echo "2: TLS1.2 and TLS1.3 (compatibility mode)"
@@ -958,9 +958,9 @@ menu() {
     echo -e "\t V2ray installation management script ${Red}[${shell_version}]${Font}"
     echo -e "\t---authored by wulabing---"
     echo -e "\thttps://github.com/wulabing\n"
-    echo -e "Currently installed version: ${shell_mode}\n"
+    echo -e "Currently installed version:${shell_mode}\n"
 
-    echo -e "—————————————— Installation Wizard ——————————————"
+    echo -e "—————————————— Installation Wizard ——————————————"""
     echo -e "${Green}0.${Font} upgrade script"
     echo -e "${Green}1.${Font} install V2Ray (Nginx+ws+tls)"
     echo -e "${Green}2.${Font} install V2Ray (http/2)"
@@ -983,7 +983,7 @@ menu() {
     echo -e "${Green}16.${Font} empty certificate legacy files"
     echo -e "${Green}17.${Font} exit \n"
 
-    read -rp "Please enter a number:" menu_num
+    read -rp "Please enter a number: " menu_num
     case $menu_num in
     0)
         update_sh
