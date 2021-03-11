@@ -921,12 +921,12 @@ update_sh() {
             exit 0
             ;;
         *) ;;
-        
+
         esac
     else
         echo -e "${OK} ${GreenBG} 当前版本为最新版本 ${Font}"
     fi
-    
+
 }
 maintain() {
     echo -e "${RedBG} This option is temporarily unavailable for ${Font}"
