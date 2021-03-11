@@ -803,13 +803,13 @@ tls_type() {
     fi
 }
 show_access_log() {
-    [ -f ${v2ray_access_log} ] && tail -f ${v2ray_access_log} || echo -e "${RedBG}log文件不存在${Font}"
+    [ -f ${v2ray_access_log} ] && tail -f ${v2ray_access_log} || echo -e "${RedBG}log file does not exist ${Font}"
 }
 show_error_log() {
-    [ -f ${v2ray_error_log} ] && tail -f ${v2ray_error_log} || echo -e "${RedBG}log文件不存在${Font}"
+    [ -f ${v2ray_error_log} ] && tail -f ${v2ray_error_log} || echo -e "${RedBG}log file does not exist ${Font}"
 }
 ssl_update_manuel() {
-    [ -f ${amce_sh_file} ] && "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" || echo -e "${RedBG}证书签发工具不存在，请确认你是否使用了自己的证书${Font}"
+    [ -f ${amce_sh_file} ] && "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" || echo -e "${RedBG} certificate issuing tool Does not exist, please confirm whether you have used your own certificate ${Font}"
     domain="$(info_extraction '\"add\"')"
     "$HOME"/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /data/v2ray.crt --keypath /data/v2ray.key --ecc
 }
@@ -818,7 +818,7 @@ bbr_boost_sh() {
     wget -N --no-check-certificate "https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
 }
 mtproxy_sh() {
-    echo -e "${Error} ${RedBG} 功能维护，暂不可用 ${Font}"
+    echo -e "${Error} ${RedBG} function maintenance, temporarily unavailable ${Font}"
 }
 
 uninstall_all() {
@@ -828,12 +828,12 @@ uninstall_all() {
     [[ -d $v2ray_bin_dir ]] && rm -rf $v2ray_bin_dir
     [[ -d $v2ray_bin_dir_old ]] && rm -rf $v2ray_bin_dir_old
     if [[ -d $nginx_dir ]]; then
-        echo -e "${OK} ${Green} 是否卸载 Nginx [Y/N]? ${Font}"
+        echo -e "${OK} ${Green} Do you want to uninstall Nginx [Y/N]? ${Font}"
         read -r uninstall_nginx
         case $uninstall_nginx in
         [yY][eE][sS] | [yY])
             rm -rf $nginx_dir
-            echo -e "${OK} ${Green} 已卸载 Nginx ${Font}"
+            echo -e "${OK} ${Green} uninstalled Nginx ${Font}"
             ;;
         *) ;;
 
@@ -842,12 +842,12 @@ uninstall_all() {
     [[ -d $v2ray_conf_dir ]] && rm -rf $v2ray_conf_dir
     [[ -d $web_dir ]] && rm -rf $web_dir
     systemctl daemon-reload
-    echo -e "${OK} ${GreenBG} 已卸载，SSL证书文件已保留 ${Font}"
+    echo -e "${OK} ${GreenBG} has been uninstalled, the SSL certificate file has been retained ${Font}"
 }
 delete_tls_key_and_crt() {
     [[ -f $HOME/.acme.sh/acme.sh ]] && /root/.acme.sh/acme.sh uninstall >/dev/null 2>&1
     [[ -d $HOME/.acme.sh ]] && rm -rf "$HOME/.acme.sh"
-    echo -e "${OK} ${GreenBG} 已清空证书遗留文件 ${Font}"
+    echo -e "${OK} ${GreenBG} has cleared the remaining certificate files ${Font}"
 }
 judge_mode() {
     if [ -f $v2ray_bin_dir/v2ray ] || [ -f $v2ray_bin_dir_old/v2ray ]; then
