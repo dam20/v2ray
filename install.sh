@@ -912,19 +912,19 @@ update_sh() {
     echo "$ol_version" >$version_cmp
     echo "$shell_version" >>$version_cmp
     if [[ "$shell_version" < "$(sort -rV $version_cmp | head -1)" ]]; then
-        echo -e "${OK} ${GreenBG} There is a new version, do you want to update [Y/N]? ${Font}"
+        echo -e "${OK} ${GreenBG} 存在新版本，是否更新 [Y/N]? ${Font}"
         read -r update_confirm
         case $update_confirm in
         [yY][eE][sS] | [yY])
             wget -N --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh
-            echo -e "${OK} ${GreenBG} update completed ${Font}"
+            echo -e "${OK} ${GreenBG} 更新完成 ${Font}"
             exit 0
             ;;
         *) ;;
 
         esac
     else
-        echo -e "${OK} ${GreenBG} The current version is the latest version ${Font}"
+        echo -e "${OK} ${GreenBG} 当前版本为最新版本 ${Font}"
     fi
 
 }
