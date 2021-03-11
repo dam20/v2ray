@@ -435,7 +435,7 @@ domain_check() {
     echo -e "Domain name dns resolve IP: ${domain_ip}"
     echo -e "Local IP: ${local_ip}"
     sleep 2
-    if [[ $(echo "${local_ip}" | tr'.''+' | bc) -eq $(echo "${domain_ip}" | tr'.''+' | bc) ]]; then
+    if [[ $(echo "${local_ip}" | tr '.' '+' | bc) -eq $(echo "${domain_ip}" | tr '.' '+' | bc) ]]; then
         echo -e "${OK} ${GreenBG} The domain name dns resolved IP matches the local IP ${Font}"
         sleep 2
     else
@@ -960,7 +960,7 @@ menu() {
     echo -e "\thttps://github.com/wulabing\n"
     echo -e "Currently installed version: ${shell_mode}\n"
 
-    echo -e "—————————————— Installation Wizard ——————————————"""
+    echo -e "—————————————— Installation Wizard ——————————————"
     echo -e "${Green}0.${Font} upgrade script"
     echo -e "${Green}1.${Font} install V2Ray (Nginx+ws+tls)"
     echo -e "${Green}2.${Font} install V2Ray (http/2)"
