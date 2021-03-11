@@ -6,14 +6,14 @@ cd "$(
     cd "$(dirname "$0")" || exit
     pwd
 )" || exit
-#================================================ ===
+#===================================================
 # System Request:Debian 9+/Ubuntu 18.04+/Centos 7+
 # Author: wulabing
 # Dscription: V2ray ws+tls onekey Management
 # Version: 1.0
 # email:admin@wulabing.com
 # Official document: www.v2ray.com
-#================================================ ===
+#===================================================
 
 #fonts color
 Green="\033[32m"
@@ -144,7 +144,7 @@ chrony_install() {
     chronyc sourcestats -v
     chronyc tracking -v
     date
-    read -rp "Please confirm whether the time is accurate, the error range is ±3 minutes (Y/N): "chrony_install
+    read -rp "Please confirm whether the time is accurate, the error range is Â±3 minutes (Y/N): "chrony_install
     [[ -z ${chrony_install} ]] && chrony_install="Y"
     case $chrony_install in
     [yY][eE][sS] | [yY])
@@ -959,21 +959,21 @@ menu() {
     echo -e "\thttps://github.com/wulabing\n"
     echo -e "Currently installed version:${shell_mode}\n"
 
-    echo -e "—————————————— Installation Wizard ——————————————"""
+    echo -e "============== Installation Wizard =============="""
     echo -e "${Green}0.${Font} upgrade script"
     echo -e "${Green}1.${Font} install V2Ray (Nginx+ws+tls)"
     echo -e "${Green}2.${Font} install V2Ray (http/2)"
     echo -e "${Green}3.${Font} upgrade V2Ray core"
-    echo -e "—————————————— Configuration change ——————————————"
+    echo -e "============== Configuration change =============="
     echo -e "${Green}4.${Font} change UUID"
     echo -e "${Green}5.${Font} change alterid"
     echo -e "${Green}6.${Font} change port"
     echo -e "${Green}7.${Font} change TLS version (only ws+tls valid)"
-    echo -e "—————————————— View information ——————————————"
+    echo -e "============== View information =============="
     echo -e "${Green}8.${Font} View real-time access log"
     echo -e "${Green}9.${Font} View real-time error log"
     echo -e "${Green}10.${Font} View V2Ray configuration information"
-    echo -e "—————————————— Other options ——————————————"
+    echo -e "============== Other options =============="
     echo -e "${Green}11.${Font} install 4 in 1 bbr sharp speed installation script"
     echo -e "${Green}12.${Font} install MTproxy (support TLS obfuscation)"
     echo -e "${Green}13.${Font} Certificate Validity Update"
@@ -981,7 +981,7 @@ menu() {
     echo -e "${Green}15.${Font} update certificate crontab scheduled task"
     echo -e "${Green}16.${Font} empty certificate legacy files"
     echo -e "${Green}17.${Font} exit \n"
-
+    echo -e ""
     read -rp "Please enter a number: " menu_num
     case $menu_num in
     0)
