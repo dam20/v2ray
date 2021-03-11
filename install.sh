@@ -954,7 +954,7 @@ list() {
 }
 
 menu() {
-    update_sh
+    #update_sh
     echo -e "\t V2ray installation management script ${Red}[${shell_version}]${Font}"
     echo -e "\t---authored by wulabing---"
     echo -e "\thttps://github.com/wulabing\n"
