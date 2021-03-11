@@ -166,7 +166,7 @@ dependency_install() {
     else
         ${INS} -y install cron
     fi
-    judge "安装 crontab"
+    judge "install crontab"
 
     if [[ "${ID}" == "centos" ]]; then
         touch /var/spool/cron/root && chmod 600 /var/spool/cron/root
@@ -176,26 +176,26 @@ dependency_install() {
         systemctl start cron && systemctl enable cron
 
     fi
-    judge "crontab 自启动配置 "
+    judge "crontab self-starting configuration"
 
     ${INS} -y install bc
-    judge "安装 bc"
+    judge "install bc"
 
     ${INS} -y install unzip
-    judge "安装 unzip"
+    judge "install unzip"
 
     ${INS} -y install qrencode
-    judge "安装 qrencode"
+    judge "install qrencode"
 
     ${INS} -y install curl
-    judge "安装 curl"
+    judge "install curl"
 
     if [[ "${ID}" == "centos" ]]; then
         ${INS} -y groupinstall "Development tools"
     else
         ${INS} -y install build-essential
     fi
-    judge "编译工具包 安装"
+    judge "Compile Toolkit Installation"
 
     if [[ "${ID}" == "centos" ]]; then
         ${INS} -y install pcre pcre-devel zlib-devel epel-release
@@ -203,34 +203,34 @@ dependency_install() {
         ${INS} -y install libpcre3 libpcre3-dev zlib1g-dev dbus
     fi
 
-    #    ${INS} -y install rng-tools
-    #    judge "rng-tools 安装"
+    # ${INS} -y install rng-tools
+    # judge "rng-tools installation"
 
     ${INS} -y install haveged
-    #    judge "haveged 安装"
+    # judge "haveged installation"
 
-    #    sed -i -r '/^HRNGDEVICE/d;/#HRNGDEVICE=\/dev\/null/a HRNGDEVICE=/dev/urandom' /etc/default/rng-tools
+    # sed -i -r '/^HRNGDEVICE/d;/#HRNGDEVICE=\/dev\/null/a HRNGDEVICE=/dev/urandom' /etc/default/rng-tools
 
     if [[ "${ID}" == "centos" ]]; then
-        #       systemctl start rngd && systemctl enable rngd
-        #       judge "rng-tools 启动"
+        # systemctl start rngd && systemctl enable rngd
+        # judge "rng-tools start"
         systemctl start haveged && systemctl enable haveged
-        #       judge "haveged 启动"
+        # judge "haveged start"
     else
-        #       systemctl start rng-tools && systemctl enable rng-tools
-        #       judge "rng-tools 启动"
+        # systemctl start rng-tools && systemctl enable rng-tools
+        # judge "rng-tools start"
         systemctl start haveged && systemctl enable haveged
-        #       judge "haveged 启动"
+        # judge "haveged start"
     fi
 }
 basic_optimization() {
-    # 最大文件打开数
+    # Maximum number of open files
     sed -i '/^\*\ *soft\ *nofile\ *[[:digit:]]*/d' /etc/security/limits.conf
     sed -i '/^\*\ *hard\ *nofile\ *[[:digit:]]*/d' /etc/security/limits.conf
     echo '* soft nofile 65536' >>/etc/security/limits.conf
     echo '* hard nofile 65536' >>/etc/security/limits.conf
 
-    # 关闭 Selinux
+    # Close Selinux
     if [[ "${ID}" == "centos" ]]; then
         sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
         setenforce 0
@@ -239,9 +239,9 @@ basic_optimization() {
 }
 port_alterid_set() {
     if [[ "on" != "$old_config_status" ]]; then
-        read -rp "请输入连接端口（default:443）:" port
+        read -rp "Please enter the connection port (default:443) :" port
         [[ -z ${port} ]] && port="443"
-        read -rp "请输入alterID（default:2 仅允许填数字）:" alterID
+        read -rp "Please enter alterID (default: 2 only allows numbers) :" alterID
         [[ -z ${alterID} ]] && alterID="2"
     fi
 }
@@ -250,14 +250,14 @@ modify_path() {
         camouflage="$(grep '\"path\"' $v2ray_qr_config_file | awk -F '"' '{print $4}')"
     fi
     sed -i "/\"path\"/c \\\t  \"path\":\"${camouflage}\"" ${v2ray_conf}
-    judge "V2ray 伪装路径 修改"
+    judge "V2ray camouflage path modification"
 }
 modify_alterid() {
     if [[ "on" == "$old_config_status" ]]; then
         alterID="$(grep '\"aid\"' $v2ray_qr_config_file | awk -F '"' '{print $4}')"
     fi
     sed -i "/\"alterId\"/c \\\t  \"alterId\":${alterID}" ${v2ray_conf}
-    judge "V2ray alterid 修改"
+    judge "V2ray alterid modification"
     [ -f ${v2ray_qr_config_file} ] && sed -i "/\"aid\"/c \\  \"aid\": \"${alterID}\"," ${v2ray_qr_config_file}
     echo -e "${OK} ${GreenBG} alterID:${alterID} ${Font}"
 }
@@ -271,7 +271,7 @@ modify_inbound_port() {
     else
         sed -i "/\"port\"/c  \    \"port\":${port}," ${v2ray_conf}
     fi
-    judge "V2ray inbound_port 修改"
+    judge "V2ray inbound_port modification"
 }
 modify_UUID() {
     [ -z "$UUID" ] && UUID=$(cat /proc/sys/kernel/random/uuid)
@@ -279,7 +279,7 @@ modify_UUID() {
         UUID="$(info_extraction '\"id\"')"
     fi
     sed -i "/\"id\"/c \\\t  \"id\":\"${UUID}\"," ${v2ray_conf}
-    judge "V2ray UUID 修改"
+    judge "V2ray UUID modification"
     [ -f ${v2ray_qr_config_file} ] && sed -i "/\"id\"/c \\  \"id\": \"${UUID}\"," ${v2ray_qr_config_file}
     echo -e "${OK} ${GreenBG} UUID:${UUID} ${Font}"
 }
@@ -289,9 +289,9 @@ modify_nginx_port() {
     fi
     sed -i "/ssl http2;$/c \\\tlisten ${port} ssl http2;" ${nginx_conf}
     sed -i "3c \\\tlisten [::]:${port} http2;" ${nginx_conf}
-    judge "V2ray port 修改"
+    judge "V2ray port modification"
     [ -f ${v2ray_qr_config_file} ] && sed -i "/\"port\"/c \\  \"port\": \"${port}\"," ${v2ray_qr_config_file}
-    echo -e "${OK} ${GreenBG} 端口号:${port} ${Font}"
+    echo -e "${OK} ${GreenBG} Port number: ${port} ${Font}"
 }
 modify_nginx_other() {
     sed -i "/server_name/c \\\tserver_name ${domain};" ${nginx_conf}
@@ -301,12 +301,12 @@ modify_nginx_other() {
     #sed -i "27i \\\tproxy_intercept_errors on;"  ${nginx_dir}/conf/nginx.conf
 }
 web_camouflage() {
-    ##请注意 这里和LNMP脚本的默认路径冲突，千万不要在安装了LNMP的环境下使用本脚本，否则后果自负
+    ##Please note that this conflicts with the default path of the LNMP script. Do not use this script in an environment where LNMP is installed, otherwise you will be responsible for the consequences
     rm -rf /home/wwwroot
     mkdir -p /home/wwwroot
     cd /home/wwwroot || exit
     git clone https://github.com/wulabing/3DCEList.git
-    judge "web 站点伪装"
+    judge "web site camouflage"
 }
 v2ray_install() {
     if [[ -d /root/v2ray ]]; then
@@ -323,20 +323,20 @@ v2ray_install() {
         rm -rf $v2ray_systemd_file
         systemctl daemon-reload
         bash v2ray.sh --force
-        judge "安装 V2ray"
+        judge "Install V2ray"
     else
-        echo -e "${Error} ${RedBG} V2ray 安装文件下载失败，请检查下载地址是否可用 ${Font}"
+        echo -e "${Error} ${RedBG} V2ray installation file download failed, please check whether the download address is available ${Font}"
         exit 4
     fi
-    # 清除临时文件
+    # Clear temporary files
     rm -rf /root/v2ray
 }
 nginx_exist_check() {
     if [[ -f "/etc/nginx/sbin/nginx" ]]; then
-        echo -e "${OK} ${GreenBG} Nginx已存在，跳过编译安装过程 ${Font}"
+        echo -e "${OK} ${GreenBG} Nginx already exists, skip the process of compiling and installing ${Font}"
         sleep 2
     elif [[ -d "/usr/local/nginx/" ]]; then
-        echo -e "${OK} ${GreenBG} 检测到其他套件安装的Nginx，继续安装会造成冲突，请处理后安装${Font}"
+        echo -e "${OK} ${GreenBG} detected Nginx installed by other packages, continuing the installation will cause conflicts, please resolve and install ${Font}"
         exit 1
     else
         nginx_install
