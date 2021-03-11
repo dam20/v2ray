@@ -982,7 +982,7 @@ menu() {
     echo -e "${Green}16.${Font} empty certificate legacy files"
     echo -e "${Green}17.${Font} exit \n"
     echo -e ""
-    read -rp "Please enter a number: " menu_num
+    read -rp 'Please enter a number: ' menu_num
     case $menu_num in
     0)
         update_sh
